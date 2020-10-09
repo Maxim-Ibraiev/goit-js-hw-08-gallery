@@ -1,7 +1,5 @@
 import { default as data } from "./gallery-items.js";
 
-// Создание и рендер разметки по массиву данных и предоставленному шаблону.
-
 const ulRef = document.querySelector("ul.js-gallery");
 
 const gallery = data.reduce((acc, { preview, original, description }) => {
@@ -30,26 +28,57 @@ ulRef.append(...gallery);
 
 const modalRef = document.querySelector(".js-lightbox");
 const imgModalRef = document.querySelector(".js-lightbox .lightbox__image");
-const btnRef = document.querySelector('button[data-action="close-lightbox"]');
 
-// Реализация делегирования на галерее ul.js-gallery и получение url большого изображения.
 ulRef.addEventListener("click", (e) => {
   if (e.target.nodeName != "IMG") return;
 
+  const liRef = e.target.parentNode.parentNode;
+  const overlayRef = document.querySelector(".lightbox__overlay");
   const urlDataRef = e.target.dataset.source;
+  const ulArr = Array.from(document.querySelector(".js-gallery").children);
+  const currentLiRef = Array.from(
+    document.querySelector(".js-gallery").children
+  ).indexOf(liRef);
+  let nextModalImg = currentLiRef;
 
-  // Открытие модального окна по клику на элементе галереи.
   modalRef.classList.add("is-open");
-
-  // Подмена значения атрибута src элемента img.lightbox__image.
   imgModalRef.setAttribute("src", urlDataRef);
+
+  document.addEventListener("click", (event) => {
+    if (event.target == overlayRef) removeModal();
+  });
 
   document.addEventListener("keydown", (event) => {
     if (event.code === "Escape") removeModal();
+
+    if (event.code === "ArrowLeft") {
+      nextModalImg == 0
+        ? (nextModalImg = ulArr.length - 1)
+        : (nextModalImg -= 1);
+
+      imgModalRef.removeAttribute("src");
+      imgModalRef.setAttribute(
+        "src",
+        ulArr[nextModalImg].querySelector("img").dataset.source
+      );
+    }
+
+    if (event.code === "ArrowRight") {
+      nextModalImg == ulArr.length - 1
+        ? (nextModalImg = 0)
+        : (nextModalImg += 1);
+
+      imgModalRef.removeAttribute("src");
+      imgModalRef.setAttribute(
+        "src",
+        ulArr[nextModalImg].querySelector("img").dataset.source
+      );
+    }
   });
 });
 
-// Закрытие модального окна по клику на кнопку button[data-action="close-lightbox"].
+const btnRef = document.querySelector('button[data-action="close-lightbox"]');
+
 btnRef.addEventListener("click", () => {
   removeModal();
 });
@@ -57,6 +86,5 @@ btnRef.addEventListener("click", () => {
 function removeModal() {
   modalRef.classList.remove("is-open");
 
-  // Очистка значения атрибута src элемента img.lightbox__image. Это необходимо для того, чтобы при следующем открытии модального окна, пока грузится изображение, мы не видели предыдущее.
   imgModalRef.removeAttribute("src");
 }
