@@ -10,7 +10,7 @@ const gallery = data.reduce((acc, { preview, original, description }) => {
   imgRef.setAttribute("src", `${preview}`);
   imgRef.setAttribute("alt", `${description}`);
   imgRef.setAttribute("data-source", `${original}`);
-  // aRef.setAttribute("href", `${original}`);
+  aRef.setAttribute("href", `${original}`);
 
   imgRef.classList.add("gallery__image");
   liRef.classList.add("gallery__item");
@@ -30,6 +30,7 @@ const modalRef = document.querySelector(".js-lightbox");
 const imgModalRef = document.querySelector(".js-lightbox .lightbox__image");
 
 ulRef.addEventListener("click", (e) => {
+  e.preventDefault();
   if (e.target.nodeName != "IMG") return;
 
   const liRef = e.target.parentNode.parentNode;
