@@ -29,30 +29,22 @@ ulRef.append(...gallery);
 const modalRef = document.querySelector(".js-lightbox");
 const imgModalRef = document.querySelector(".lightbox__image");
 const overlayRef = document.querySelector(".lightbox__overlay");
-const ulArr = Array.from(document.querySelector(".js-gallery").children);
+const ulArr = Array.from(ulRef.children);
 
 ulRef.addEventListener("click", (e) => {
   e.preventDefault();
   if (e.target.nodeName != "IMG") return;
 
-  const liRef = e.target.parentNode.parentNode;
   const urlDataRef = e.target.dataset.source;
-  let nextModalImg = ulArr.indexOf(liRef);
 
   modalRef.classList.add("is-open");
   imgModalRef.setAttribute("src", urlDataRef);
 
-  overlayRef.addEventListener("click", () => {
-    removeModal();
-  });
+  const btnRef = document.querySelector('button[data-action="close-lightbox"]');
 
+  btnRef.addEventListener("click", removeModal);
+  overlayRef.addEventListener("click", removeModal);
   document.addEventListener("keydown", onKeyboardModal);
-});
-
-const btnRef = document.querySelector('button[data-action="close-lightbox"]');
-
-btnRef.addEventListener("click", () => {
-  removeModal();
 });
 
 function removeModal() {
